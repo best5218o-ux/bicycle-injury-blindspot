@@ -70,6 +70,10 @@
   "metro_vs_ratio_all": {
    "rho": -0.512,
    "p": 0.0355
+  },
+  "ratio_all_vs_victim_share": {
+   "rho": 0.625,
+   "p": 0.0073
   }
  },
  "facility": {
@@ -91,5 +95,38 @@
   "single_share_of_offender": 0.034836427939876215,
   "inj65_victim_to_offender": 1.7340579710144928,
   "death65_victim_share": 0.7547169811320755
+ },
+ "trend": {
+  "2021": {
+   "pub_share": 0.269,
+   "all_share": 0.596,
+   "bike_share_traffic": 0.13
+  },
+  "2022": {
+   "pub_share": 0.259,
+   "all_share": 0.581,
+   "bike_share_traffic": 0.133
+  },
+  "2023": {
+   "pub_share": 0.259,
+   "all_share": 0.589,
+   "bike_share_traffic": 0.128
+  },
+  "2024": {
+   "pub_share": 0.283,
+   "all_share": 0.636,
+   "bike_share_traffic": 0.135
+  },
+  "2025": {
+   "pub_share": 0.276,
+   "all_share": 0.638,
+   "bike_share_traffic": 0.134
+  }
+ },
+ "decomposition": {
+  "gm_ratio_pub_nonmetro": 5.92,
+  "gm_ratio_pub_metro": 3.7,
+  "share_from_victim_basis": 0.374,
+  "share_from_police_119_gap": 0.626
  }
 }

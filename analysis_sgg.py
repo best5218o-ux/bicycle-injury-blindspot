@@ -52,26 +52,29 @@ q_off = d.rate_off >= d.rate_off.quantile(0.75)
 q_sum = d.rate_sum >= d.rate_sum.quantile(0.75)
 res['top_quartile_overlap'] = dict(n_top_off=int(q_off.sum()), also_top_sum=int((q_off & q_sum).sum()),
                                    dropped_from_top=int((q_off & ~q_sum).sum()), entered_top=int((~q_off & q_sum).sum()))
+moved = d[(q_off & ~q_sum) | (~q_off & q_sum)]
+res['top_quartile_overlap']['moved_with_sum_lt20'] = int((moved.sum_inj < 20).sum())
+res['top_quartile_overlap']['moved_total'] = int(len(moved))
 res['off_zero_or_le2_but_victim_ge10'] = int(((d.offender_injured <= 2) & (d.victim_injured >= 10)).sum())
 res['victim_gt_offender'] = int((d.victim_injured > d.offender_injured).sum())
 res['victim_ge_2x_offender_among_sum20'] = int(((d.victim_injured >= 2 * d.offender_injured) & (d.sum_inj >= 20)).sum())
 res['n_sum20'] = int((d.sum_inj >= 20).sum())
 
-# ---- 3. 피해 몫(피해/(가해+피해))의 지역 구조 : 구·시·군 ----
+# ---- 3. 피해운전자 비중(피해/(가해+피해))의 지역 구조 : 자치구·시·군 ----
 n20 = d[d.sum_inj >= 20]
-res['victim_share_by_kind_sum20'] = {k: dict(n=int(len(v)), median=round(float(v.victim_share.median()), 3)) for k, v in n20.groupby('kind')}
+res['victim_share_by_kind_sum20'] = {k: dict(n=int(len(v)), median=round(float((v.victim_injured / v.sum_inj).median()), 4)) for k, v in n20.groupby('kind')}
 kw = stats.kruskal(*[v.victim_share.values for k, v in n20.groupby('kind')])
 res['victim_share_kruskal'] = dict(H=round(float(kw.statistic), 2), p=float('%.3g' % kw.pvalue))
 a = n20[n20.kind == '구'].victim_share; b = n20[n20.kind != '구'].victim_share
 mu = stats.mannwhitneyu(a, b, alternative='two-sided')
-res['victim_share_gu_vs_rest'] = dict(median_gu=round(float(a.median()), 3), median_rest=round(float(b.median()), 3), p=float('%.3g' % mu.pvalue))
+res['victim_share_gu_vs_rest'] = dict(median_gu=round(float(a.median()), 4), median_rest=round(float(b.median()), 4), p=float('%.3g' % mu.pvalue))
 res['victim_share_vs_70plus'] = rho(n20, 'victim_share', 'r70')
 res['rate_off_vs_70plus'] = rho(d, 'rate_off', 'r70')
 res['rate_sum_vs_70plus'] = rho(d, 'rate_sum', 'r70')
 
 # ---- 4. 자전거도로 폭(표준데이터)과의 대응 : 폭이 기록된 겸용도로 km ≥ 5 인 시군구 ----
 d['share_lt2'] = (d['km_w_lt1.5'] + d['km_w_1.5_2']) / d.km_shared_width_known.replace(0, np.nan) * 100
-wk = d[(d.km_shared_width_known >= 5) & (d.sum_inj >= 10)]
+wk = d[(d.km_shared_width_known >= 5) & (d.sum_inj >= 10)]   # 폭 기재 겸용도로 5km 이상 + 부상 합 10명 이상
 res['width_subset_n'] = int(len(wk))
 res['width_vs_rate_sum'] = rho(wk, 'share_lt2', 'rate_sum')
 res['width_vs_victim_share'] = rho(wk, 'share_lt2', 'victim_share')

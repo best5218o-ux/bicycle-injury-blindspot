@@ -2,6 +2,7 @@
 실행: pip install -r requirements.txt && python analysis.py && python make_figures.py
 입력은 data/*.csv 뿐이며(출처는 data/SOURCES.md), 모든 합계를 원문 값과 대조(assert)한 뒤 통계를 계산한다."""
 import json
+import numpy as np
 import pandas as pd
 from scipy import stats
 
@@ -75,6 +76,21 @@ DET['single_share_of_offender'] = DET['single_bike_injured'] / DET['offender_inj
 DET['inj65_victim_to_offender'] = DET['inj65_victim'] / DET['inj65_offender']
 DET['death65_victim_share'] = DET['death65_victim'] / DET['death_victim']
 res['police_detail'] = DET
+# ---- 5. 연도별 추세(2021~2025): 틈은 해마다 반복되는가 ----
+tsr = pd.read_csv(DATA + 'bike_injury_timeseries_2021_2025.csv')
+assert tsr.set_index('year').loc[2025].tolist() == [5655, 13085, 20503, 153308]
+tsr['pub_share_of_119'] = tsr.police_offender_injured / tsr.nfa119_bike_transported
+tsr['all_share_of_119'] = tsr.police_all_injured / tsr.nfa119_bike_transported
+tsr['bike_share_of_119_traffic'] = tsr.nfa119_bike_transported / tsr.nfa119_traffic_total
+res['trend'] = {int(y): dict(pub_share=round(float(a), 3), all_share=round(float(b), 3), bike_share_traffic=round(float(c), 3))
+                for y, a, b, c in zip(tsr.year, tsr.pub_share_of_119, tsr.all_share_of_119, tsr.bike_share_of_119_traffic)}
+# ---- 6. 도·광역시 배수 차이의 분해: 119÷공표 = (119÷경찰 전체) × 1/(1−피해 비중) — 곱이므로 로그로 나눈다(기하평균) ----
+gm = lambda s: float(np.exp(np.log(s).mean()))
+o, mt = r[r.metro == 0], r[r.metro == 1]
+L_pub = np.log(gm(o.ratio_pub) / gm(mt.ratio_pub)); L_all = np.log(gm(o.ratio_all) / gm(mt.ratio_all))
+res['decomposition'] = dict(gm_ratio_pub_nonmetro=round(gm(o.ratio_pub), 2), gm_ratio_pub_metro=round(gm(mt.ratio_pub), 2),
+    share_from_victim_basis=round(float(1 - L_all / L_pub), 3), share_from_police_119_gap=round(float(L_all / L_pub), 3))
+res['spearman']['ratio_all_vs_victim_share'] = rho('ratio_all', 'victim_share')
 r.to_csv('outputs/region_table.csv', index=False)
 json.dump(res, open('outputs/results.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(json.dumps(res, ensure_ascii=False, indent=1))

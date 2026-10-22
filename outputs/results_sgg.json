@@ -13,7 +13,9 @@
   "n_top_off": 57,
   "also_top_sum": 43,
   "dropped_from_top": 14,
-  "entered_top": 14
+  "entered_top": 14,
+  "moved_with_sum_lt20": 10,
+  "moved_total": 28
  },
  "off_zero_or_le2_but_victim_ge10": 7,
  "victim_gt_offender": 174,
@@ -22,15 +24,15 @@
  "victim_share_by_kind_sum20": {
   "구": {
    "n": 63,
-   "median": 0.555
+   "median": 0.5545
   },
   "군": {
    "n": 11,
-   "median": 0.667
+   "median": 0.6667
   },
   "시": {
    "n": 62,
-   "median": 0.62
+   "median": 0.6199
   }
  },
  "victim_share_kruskal": {
@@ -38,8 +40,8 @@
   "p": 0.000957
  },
  "victim_share_gu_vs_rest": {
-  "median_gu": 0.555,
-  "median_rest": 0.621,
+  "median_gu": 0.5545,
+  "median_rest": 0.6207,
   "p": 0.0002
  },
  "victim_share_vs_70plus": {
