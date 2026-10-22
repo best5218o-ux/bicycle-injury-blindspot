@@ -1,0 +1,95 @@
+{
+ "national": {
+  "published": 5655,
+  "police_all": 13085,
+  "nfa119": 20503,
+  "victim": 8197,
+  "overlap": 767,
+  "published_share_of_119": 0.2758132956152758,
+  "police_all_share_of_119": 0.6381992879090864,
+  "ratio_119_to_published": 3.6256410256410256,
+  "ratio_119_to_police_all": 1.5669086740542606,
+  "victim_share_of_sum": 0.5917557031475599
+ },
+ "metro_vs_other": {
+  "n_metro": 7,
+  "n_other": 10,
+  "ratio_pub": {
+   "p": 0.0136,
+   "median_nonmetro": 6.18,
+   "median_metro": 3.65
+  },
+  "ratio_all": {
+   "p": 0.0431,
+   "median_nonmetro": 1.92,
+   "median_metro": 1.4
+  },
+  "victim_share": {
+   "p": 0.0702,
+   "median_nonmetro": 0.67,
+   "median_metro": 0.6
+  }
+ },
+ "spearman": {
+  "ratio_pub_vs_victim_share": {
+   "rho": 0.868,
+   "p": 6.43e-06
+  },
+  "pct70_vs_rate_pub": {
+   "rho": -0.547,
+   "p": 0.0232
+  },
+  "pct70_vs_rate_all": {
+   "rho": -0.424,
+   "p": 0.0898
+  },
+  "pct70_vs_rate_119": {
+   "rho": -0.152,
+   "p": 0.56
+  },
+  "rate_pub_vs_rate_119": {
+   "rho": 0.225,
+   "p": 0.384
+  },
+  "rate_all_vs_rate_119": {
+   "rho": 0.64,
+   "p": 0.00568
+  },
+  "shared_pct_vs_rate_119": {
+   "rho": -0.088,
+   "p": 0.736
+  },
+  "shared_pct_vs_rate_all": {
+   "rho": 0.056,
+   "p": 0.83
+  },
+  "metro_vs_ratio_pub": {
+   "rho": -0.61,
+   "p": 0.00933
+  },
+  "metro_vs_ratio_all": {
+   "rho": -0.512,
+   "p": 0.0355
+  }
+ },
+ "facility": {
+  "shared_pct_2011": 81.88410531129549,
+  "shared_pct_2015": 77.06149119812747,
+  "shared_pct_2025": 73.92190630162021,
+  "total_growth": 1.8588227608283792,
+  "shared_share_of_growth": 0.6465084436330443
+ },
+ "police_detail": {
+  "single_bike_injured": 197,
+  "offender_injured": 5655,
+  "inj65_offender": 1380,
+  "inj65_victim": 2393,
+  "death65_offender": 55,
+  "death_offender": 85,
+  "death65_victim": 80,
+  "death_victim": 106,
+  "single_share_of_offender": 0.034836427939876215,
+  "inj65_victim_to_offender": 1.7340579710144928,
+  "death65_victim_share": 0.7547169811320755
+ }
+}

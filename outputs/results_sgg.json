@@ -1,0 +1,219 @@
+{
+ "n_sgg": 228,
+ "rank_rate_off_vs_rate_sum": {
+  "n": 228,
+  "rho": 0.826,
+  "p": 3.33e-58,
+  "ci95": [
+   0.77,
+   0.87
+  ]
+ },
+ "top_quartile_overlap": {
+  "n_top_off": 57,
+  "also_top_sum": 43,
+  "dropped_from_top": 14,
+  "entered_top": 14
+ },
+ "off_zero_or_le2_but_victim_ge10": 7,
+ "victim_gt_offender": 174,
+ "victim_ge_2x_offender_among_sum20": 44,
+ "n_sum20": 136,
+ "victim_share_by_kind_sum20": {
+  "구": {
+   "n": 63,
+   "median": 0.555
+  },
+  "군": {
+   "n": 11,
+   "median": 0.667
+  },
+  "시": {
+   "n": 62,
+   "median": 0.62
+  }
+ },
+ "victim_share_kruskal": {
+  "H": 13.9,
+  "p": 0.000957
+ },
+ "victim_share_gu_vs_rest": {
+  "median_gu": 0.555,
+  "median_rest": 0.621,
+  "p": 0.0002
+ },
+ "victim_share_vs_70plus": {
+  "n": 136,
+  "rho": 0.097,
+  "p": 0.262,
+  "ci95": [
+   -0.07,
+   0.26
+  ]
+ },
+ "rate_off_vs_70plus": {
+  "n": 228,
+  "rho": -0.368,
+  "p": 9.95e-09,
+  "ci95": [
+   -0.47,
+   -0.26
+  ]
+ },
+ "rate_sum_vs_70plus": {
+  "n": 228,
+  "rho": -0.329,
+  "p": 3.65e-07,
+  "ci95": [
+   -0.44,
+   -0.21
+  ]
+ },
+ "width_subset_n": 76,
+ "width_vs_rate_sum": {
+  "n": 76,
+  "rho": 0.063,
+  "p": 0.587,
+  "ci95": [
+   -0.18,
+   0.31
+  ]
+ },
+ "width_vs_victim_share": {
+  "n": 76,
+  "rho": -0.259,
+  "p": 0.024,
+  "ci95": [
+   -0.48,
+   -0.02
+  ]
+ },
+ "width_vs_rate_off": {
+  "n": 76,
+  "rho": 0.196,
+  "p": 0.0898,
+  "ci95": [
+   -0.05,
+   0.43
+  ]
+ },
+ "std_coverage": {
+  "n_with_std": 144,
+  "n_width_ge5km": 95,
+  "km_shared_width_known": 9495.5,
+  "km_lt2": 3564.2,
+  "share_lt2_national_pct": 37.5
+ },
+ "top_gap": [
+  {
+   "sido": "대전",
+   "sgg": "서구",
+   "off": 47,
+   "vic": 130
+  },
+  {
+   "sido": "경남",
+   "sgg": "창원시",
+   "off": 69,
+   "vic": 149
+  },
+  {
+   "sido": "경기",
+   "sgg": "화성시",
+   "off": 87,
+   "vic": 165
+  },
+  {
+   "sido": "경기",
+   "sgg": "수원시",
+   "off": 169,
+   "vic": 243
+  },
+  {
+   "sido": "경기",
+   "sgg": "고양시",
+   "off": 123,
+   "vic": 195
+  },
+  {
+   "sido": "대구",
+   "sgg": "수성구",
+   "off": 60,
+   "vic": 131
+  },
+  {
+   "sido": "대구",
+   "sgg": "달서구",
+   "off": 78,
+   "vic": 144
+  },
+  {
+   "sido": "경기",
+   "sgg": "평택시",
+   "off": 79,
+   "vic": 142
+  },
+  {
+   "sido": "충북",
+   "sgg": "청주시",
+   "off": 118,
+   "vic": 179
+  },
+  {
+   "sido": "경기",
+   "sgg": "김포시",
+   "off": 57,
+   "vic": 117
+  }
+ ],
+ "top_ratio_vic15": [
+  {
+   "sido": "전북",
+   "sgg": "남원시",
+   "off": 1,
+   "vic": 21
+  },
+  {
+   "sido": "전북",
+   "sgg": "익산시",
+   "off": 3,
+   "vic": 36
+  },
+  {
+   "sido": "부산",
+   "sgg": "강서구",
+   "off": 4,
+   "vic": 35
+  },
+  {
+   "sido": "울산",
+   "sgg": "남구",
+   "off": 9,
+   "vic": 54
+  },
+  {
+   "sido": "경북",
+   "sgg": "김천시",
+   "off": 3,
+   "vic": 18
+  },
+  {
+   "sido": "충북",
+   "sgg": "충주시",
+   "off": 11,
+   "vic": 64
+  },
+  {
+   "sido": "경북",
+   "sgg": "경주시",
+   "off": 11,
+   "vic": 59
+  },
+  {
+   "sido": "경남",
+   "sgg": "사천시",
+   "off": 6,
+   "vic": 27
+  }
+ ]
+}
