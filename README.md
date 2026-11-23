@@ -1,6 +1,8 @@
 # 통계에 잡히지 않는 자전거 부상 (팀 브랜드 AI)
 AI와 함께하는 교통문제 해결을 위한 데이터 분석 공모전 제출 분석코드.
 
+**웹앱**: https://best5218o-ux.github.io/bicycle-injury-blindspot/ — 집계 기준별 지역 순위 지도, 5년 추세, 시군구 찾기, 정책 시뮬레이션 (소스: docs/)
+
 ```
 pip install -r requirements.txt
 python analysis.py        # 원문 합계 검산(assert) → outputs/results.json, outputs/region_table.csv
