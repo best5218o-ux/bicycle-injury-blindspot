@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>통계에 잡히지 않는 자전거 부상 — 브랜드 AI</title>
+<meta name="description" content="정부 공식 통계와 119 구급 이송 기록으로 다시 본 자전거 부상의 지역 격차 — 인터랙티브 분석 웹앱">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<style>
+:root{--navy:#16253D;--red:#C0392B;--blue:#34699A;--gray:#8A9099;--amber:#E8A33D;--ink:#1B1F24;--mute:#5B6B7F;--bg:#F2F4F7;--card:#FFFFFF;--line:#DDE2E8}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans KR",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+header{background:var(--navy);color:#fff;padding:28px 20px 24px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header .tag{color:#C9D3E0;font-size:14px}
+header h1{font-size:clamp(26px,4vw,40px);margin:6px 0 4px;font-weight:900}
+header p{color:#F2B8A8;margin:0;font-size:clamp(15px,2vw,18px)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.kpi{background:#22344F;border-radius:12px;padding:14px 16px}
+.kpi b{display:block;font-size:clamp(22px,3vw,32px);font-weight:900}
+.kpi span{font-size:14px;color:#E6EBF2}
+.k1 b{color:#B8BEC6}.k2 b{color:#8DB5E0}.k3 b{color:#FF8A70}.k4 b{color:#FFD08A}
+nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 16px}
+nav a{white-space:nowrap;text-decoration:none;color:var(--navy);font-weight:700;font-size:15px;padding:6px 12px;border-radius:20px;background:var(--bg)}
+nav a:hover{background:var(--navy);color:#fff}
+section{padding:26px 0}
+h2{font-size:clamp(20px,2.6vw,26px);margin:0 0 4px;color:var(--navy)}
+.lead{color:var(--mute);margin:0 0 16px;font-size:16px}
+.card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+button{font:inherit;font-weight:700;font-size:15px;border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:10px;padding:8px 14px;cursor:pointer}
+button.on{background:var(--navy);color:#fff}
+button.r.on{background:var(--red);border-color:var(--red)}
+#map svg{width:100%;height:auto;display:block}
+#map path{stroke:#fff;stroke-width:.8;cursor:pointer;transition:fill .5s}
+#map path.sel{stroke:var(--ink);stroke-width:2.2}
+#map text{font-size:11px;font-weight:700;pointer-events:none;paint-order:stroke;stroke:#fff;stroke-width:3px}
+.legend{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.legend i{display:inline-block;width:120px;height:10px;border-radius:5px;background:linear-gradient(90deg,#FBE3DD,#C0392B,#6E1A12)}
+#detail h3{margin:0 0 4px;font-size:26px;color:var(--red)}
+.rk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.rk div{background:var(--bg);border-radius:10px;padding:10px;text-align:center}
+.rk b{display:block;font-size:26px}
+.rk span{font-size:13px;color:var(--mute)}
+.bar{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:14px}
+.bar label{width:110px;flex:none}
+.bar .t{flex:1;background:var(--bg);border-radius:6px;height:22px;position:relative}
+.bar .f{height:100%;border-radius:6px;transition:width .6s}
+.bar em{font-style:normal;font-weight:700;width:76px;text-align:right}
+.note{font-size:13px;color:var(--mute)}
+.big{font-size:20px;font-weight:700}
+select,input{font:inherit;font-size:16px;padding:8px 10px;border:2px solid var(--line);border-radius:10px}
+.sgglist{max-height:430px;overflow:auto;margin-top:10px}
+.sim{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sim ol{margin:8px 0 0;padding-left:22px;font-size:17px}
+.sim li{margin:5px 0}
+.sim li.new{color:var(--red);font-weight:700}
+.sim li.out{color:var(--gray);text-decoration:line-through}
+footer{background:var(--navy);color:#C9D3E0;padding:22px 0;font-size:14px}
+footer a{color:#FFD08A}
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2,.sim{grid-template-columns:1fr}.bar label{width:84px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="tag">AI와 함께하는 교통문제 해결을 위한 데이터 분석 공모전 · 팀 브랜드 AI</div>
+  <h1>통계에 잡히지 않는 자전거 부상</h1>
+  <p>119 구급 기록으로 찾은 자전거 안전 사각지대 — 2025년 공개 통계 기준</p>
+  <div class="kpis">
+    <div class="kpi k1"><b id="kPub"></b><span>공식 통계 부상자(가해자 기준)</span></div>
+    <div class="kpi k2"><b id="kAll"></b><span>경찰 집계 전체(가해+피해)</span></div>
+    <div class="kpi k3"><b id="k119"></b><span>119 구급 이송 환자</span></div>
+    <div class="kpi k4"><b id="kShare"></b><span>공식 통계에 반영된 비율</span></div>
+  </div>
+</div></header>
+<nav><div class="wrap"><a href="#s-map">지역 지도</a><a href="#s-trend">5년 추세</a><a href="#s-sgg">우리 동네 찾기</a><a href="#s-sim">정책 시뮬레이션</a><a href="#s-src">자료·코드</a></div></nav>
+
+<section id="s-map"><div class="wrap">
+  <h2>집계 기준을 바꾸면 지역 순위가 바뀝니다</h2>
+  <p class="lead">기준을 눌러 보세요. 지역을 누르면 그 지역의 세 가지 통계를 비교합니다.</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="btns" id="basis">
+        <button data-k="rate_pub" class="on">공식 통계</button>
+        <button data-k="rate_all">경찰 집계 전체</button>
+        <button data-k="rate_119" class="r">119 구급 이송</button>
+      </div>
+      <div id="map"></div>
+      <div class="legend"><span>인구 10만 명당 부상</span><i></i><span>많음</span></div>
+    </div>
+    <div class="card" id="detail"></div>
+  </div>
+</div></section>
+
+<section id="s-trend"><div class="wrap">
+  <h2>5년 내내 공식 통계는 119 이송의 4분의 1 수준</h2>
+  <p class="lead">2021~2025년 자전거 부상자·이송 환자 수</p>
+  <div class="card"><canvas id="trend" height="110"></canvas><p class="note" id="trendNote"></p></div>
+</div></section>
+
+<section id="s-sgg"><div class="wrap">
+  <h2>우리 동네는 얼마나 빠져 있을까</h2>
+  <p class="lead">시군구 228곳 — 공식 통계(가해자 기준)와 통계에서 빠진 사고 피해자 비교</p>
+  <div class="card">
+    <div class="btns"><select id="sidoSel"></select><input id="q" placeholder="시군구 이름 검색 (예: 남원)" size="22"></div>
+    <div class="sgglist" id="sggList"></div>
+    <p class="note">시군구별 119 이송은 공개되지 않아 경찰 자료 안에서 비교했습니다. 자료: 한국도로교통공단 TAAS(2025).</p>
+  </div>
+</div></section>
+
+<section id="s-sim"><div class="wrap">
+  <h2>정책 시뮬레이션 — 지원 대상 지역은 어떻게 달라질까</h2>
+  <p class="lead">자전거 안전 지원 대상을 「인구 10만 명당 부상 상위 지역」으로 고른다고 할 때</p>
+  <div class="card">
+    <div class="btns"><span class="big" style="align-self:center">상위</span>
+      <button data-n="3">3곳</button><button data-n="5" class="on">5곳</button><button data-n="7">7곳</button></div>
+    <div class="sim">
+      <div><div class="big">현재 기준(공식 통계)</div><ol id="simA"></ol></div>
+      <div><div class="big" style="color:var(--red)">개선 기준(119 이송 반영)</div><ol id="simB"></ol></div>
+    </div>
+    <p class="note" id="simNote"></p>
+  </div>
+</div></section>
+
+<footer id="s-src"><div class="wrap">
+  <b style="color:#fff">자료</b> 소방청 「119구급서비스 통계연보」 · 행정안전부 「자전거 이용 현황」(승인통계) · 한국도로교통공단 TAAS · 행정안전부 주민등록 인구 · 전국자전거도로표준데이터 · 통계청 SGIS 기반 행정 경계(vuski/admdongkor)<br>
+  분석 코드와 자료: <a href="https://github.com/best5218o-ux/bicycle-injury-blindspot">github.com/best5218o-ux/bicycle-injury-blindspot</a> · 팀 브랜드 AI(김영민·정병진)
+</div></footer>
+
+<script>
+const D = window.DATA, fmt = n => n.toLocaleString('ko-KR');
+const N = D.nat;
+kPub.textContent = fmt(N.published) + '명'; kAll.textContent = fmt(N.police_all) + '명';
+k119.textContent = fmt(N.nfa119) + '명'; kShare.textContent = Math.round(N.published_share_of_119 * 100) + '%';
+const byS = Object.fromEntries(D.reg.map(r => [r.sido, r]));
+const LBL = { rate_pub: '공식 통계', rate_all: '경찰 집계 전체', rate_119: '119 구급 이송' };
+const RK = { rate_pub: 'rk_pub', rate_all: 'rk_all', rate_119: 'rk_119' };
+let basis = 'rate_pub', sel = '전북';
+
+// ---- map
+fetch('sido.geojson').then(r => r.json()).then(geo => {
+  const fix = poly => { if (d3.geoArea({ type: 'Polygon', coordinates: poly }) > 2 * Math.PI) poly.forEach(r => r.reverse()); };
+  geo.features.forEach(f => { const g = f.geometry; if (g.type === 'Polygon') fix(g.coordinates); else g.coordinates.forEach(fix); });
+  const W = 560, H = 640;
+  const proj = d3.geoMercator().fitSize([W, H], geo), path = d3.geoPath(proj);
+  const svg = d3.select('#map').append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+  const g = svg.append('g');
+  const paths = g.selectAll('path').data(geo.features).join('path').attr('d', path)
+    .on('click', (e, d) => { sel = d.properties.sido; draw(); });
+const OFF = { '서울': [-38, -22], '인천': [-40, 18], '경기': [38, 30], '세종': [-38, -6], '대전': [8, 16], '충남': [-30, 6], '대구': [6, 14], '광주': [-12, 2], '울산': [14, 0], '부산': [10, 10] };
+  const labels = g.selectAll('text').data(geo.features).join('text')
+    .attr('transform', d => { const c = path.centroid(d), o = OFF[d.properties.sido] || [0, 0]; return `translate(${c[0] + o[0]},${c[1] + o[1]})`; })
+    .attr('text-anchor', 'middle');
+  window.draw = () => {
+    const vals = D.reg.map(r => r[basis]);
+    const col = d3.scaleSequential([d3.min(vals), d3.max(vals)], t => d3.interpolateRgb('#FBE3DD', '#7A1D12')(t));
+    paths.attr('fill', d => col(byS[d.properties.sido][basis])).classed('sel', d => d.properties.sido === sel);
+    labels.text(d => `${d.properties.sido} ${byS[d.properties.sido][RK[basis]]}위`);
+    detail();
+  };
+  draw();
+});
+document.querySelectorAll('#basis button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#basis button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+  basis = b.dataset.k; draw();
+});
+function detail() {
+  const r = byS[sel], all = r.pub + r.vic, mx = Math.max(r.n119, all);
+  const bar = (l, v, c) => `<div class="bar"><label>${l}</label><div class="t"><div class="f" style="width:${v / mx * 100}%;background:${c}"></div></div><em>${fmt(v)}명</em></div>`;
+  document.getElementById('detail').innerHTML = `
+    <h3>${r.sido}</h3><div class="note">${r.metro ? '서울·광역시' : '도·세종'} · 인구 ${fmt(r.pop)}명</div>
+    <div class="rk"><div><span>공식 통계</span><b style="color:var(--gray)">${r.rk_pub}위</b></div>
+    <div><span>경찰 집계 전체</span><b style="color:var(--blue)">${r.rk_all}위</b></div>
+    <div><span>119 이송</span><b style="color:var(--red)">${r.rk_119}위</b></div></div>
+    ${bar('공식 통계', r.pub, '#8A9099')}${bar('경찰 집계 전체', all, '#34699A')}${bar('119 구급 이송', r.n119, '#C0392B')}
+    <p class="big" style="margin:14px 0 4px">119 이송은 공식 통계의 <span style="color:var(--red)">${r.ratio_pub.toFixed(1)}배</span></p>
+    <p style="margin:0">경찰이 집계한 부상자 중 공식 통계에서 빠지는 피해자 비율 <b>${Math.round(r.victim_share * 100)}%</b></p>
+    <p class="note">경찰 집계 전체는 가해+피해 단순 합(전국 중복 5.5%). 순위는 인구 10만 명당, 1위 = 가장 많음.</p>`;
+}
+
+// ---- trend
+new Chart(document.getElementById('trend'), {
+  type: 'line',
+  data: { labels: D.ts.map(t => t.year), datasets: [
+    { label: '119 구급 이송', data: D.ts.map(t => t.n119), borderColor: '#C0392B', backgroundColor: '#C0392B', borderWidth: 3, tension: .25 },
+    { label: '경찰 집계 전체', data: D.ts.map(t => t.all), borderColor: '#34699A', backgroundColor: '#34699A', borderWidth: 3, tension: .25 },
+    { label: '공식 통계', data: D.ts.map(t => t.pub), borderColor: '#8A9099', backgroundColor: '#8A9099', borderWidth: 3, tension: .25 }] },
+  options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 14 } } } }, scales: { y: { beginAtZero: true, ticks: { callback: v => fmt(v) } } } }
+});
+trendNote.textContent = '공식 통계 ÷ 119 이송: ' + D.ts.map(t => `${t.year}년 ${Math.round(t.pub / t.n119 * 100)}%`).join(' · ');
+
+// ---- sgg
+const sidos = [...new Set(D.sgg.map(s => s.sido))];
+sidoSel.innerHTML = '<option value="">전국 (차이 큰 순)</option>' + sidos.map(s => `<option>${s}</option>`).join('');
+function sggDraw() {
+  const q = document.getElementById('q').value.trim(), sd = sidoSel.value;
+  let L = D.sgg.filter(s => (!sd || s.sido === sd) && (!q || s.sgg.includes(q) || s.sido.includes(q)));
+  L.sort((a, b) => (b.vic - b.pub) - (a.vic - a.pub)); if (!sd && !q) L = L.slice(0, 15);
+  const mx = Math.max(1, ...L.map(s => Math.max(s.pub, s.vic)));
+  sggList.innerHTML = L.map(s => `<div style="margin:10px 0"><b>${s.sido} ${s.sgg}</b> <span class="note">피해자 비율 ${s.pub + s.vic ? Math.round(s.vic / (s.pub + s.vic) * 100) : 0}%</span>
+    <div class="bar"><label>공식 통계</label><div class="t"><div class="f" style="width:${s.pub / mx * 100}%;background:#8A9099"></div></div><em>${s.pub}명</em></div>
+    <div class="bar"><label>빠진 피해자</label><div class="t"><div class="f" style="width:${s.vic / mx * 100}%;background:#C0392B"></div></div><em>${s.vic}명</em></div></div>`).join('') || '<p>검색 결과가 없습니다.</p>';
+}
+sidoSel.onchange = sggDraw; q.oninput = sggDraw; sggDraw();
+
+// ---- simulation
+function sim(n) {
+  const A = [...D.reg].sort((a, b) => a.rk_pub - b.rk_pub).slice(0, n), B = [...D.reg].sort((a, b) => a.rk_119 - b.rk_119).slice(0, n);
+  const a = new Set(A.map(r => r.sido)), b = new Set(B.map(r => r.sido));
+  simA.innerHTML = A.map(r => `<li class="${b.has(r.sido) ? '' : 'out'}">${r.sido} <span class="note">10만 명당 ${r.rate_pub}명</span></li>`).join('');
+  simB.innerHTML = B.map(r => `<li class="${a.has(r.sido) ? '' : 'new'}">${r.sido} <span class="note">10만 명당 ${r.rate_119}명</span></li>`).join('');
+  const nw = B.filter(r => !a.has(r.sido)).map(r => r.sido);
+  simNote.textContent = nw.length ? `119 이송을 반영하면 새로 지원 대상에 포함되는 지역: ${nw.join(' · ')}` : '두 기준의 대상 지역이 같습니다.';
+}
+document.querySelectorAll('#s-sim button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#s-sim button').forEach(x => x.classList.remove('on')); b.classList.add('on'); sim(+b.dataset.n);
+});
+sim(5);
+</script>
+</body>
+</html>
